@@ -53,16 +53,17 @@ export const TeacherDashboard = () => {
   const [changePasswordDialogOpen, setChangePasswordDialogOpen] = useState(false);
 
   // Get teacher's assigned subjects
-  const teacherSubjects = subjects.filter(s => s.teacher_id === currentUser?.id);
-  const teacherSubjectIds = teacherSubjects.map(s => s.id);
+  const teacherSubjects = subjects.filter((s) => s.teacher_id === currentUser?.id);
+  // Normalize IDs to strings to avoid type mismatches between API responses
+  const teacherSubjectIds = teacherSubjects.map((s) => String(s.id));
 
-  // Get notes and videos for teacher's subjects
-  const teacherNotes = notes.filter(n => teacherSubjectIds.includes(n.subject_id));
-  const teacherVideos = videos.filter(v => teacherSubjectIds.includes(v.subject_id));
+  // Get notes and videos for teacher's subjects (with normalized IDs)
+  const teacherNotes = notes.filter((n) => teacherSubjectIds.includes(String(n.subject_id)));
+  const teacherVideos = videos.filter((v) => teacherSubjectIds.includes(String(v.subject_id)));
 
-  // Get enrollments for teacher's subjects
-  const teacherEnrollments = enrollments.filter(e => 
-    teacherSubjectIds.includes(e.subject_id) && e.status === 'active'
+  // Get enrollments for teacher's subjects (with normalized IDs)
+  const teacherEnrollments = enrollments.filter(
+    (e) => teacherSubjectIds.includes(String(e.subject_id)) && e.status === 'active'
   );
 
   // Handle note upload from UploadDialog
@@ -277,40 +278,47 @@ export const TeacherDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Teacher Dashboard</h1>
-            <p className="text-sm text-gray-500">Kathmandu University - B.Tech.Ed. IT</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium">{currentUser?.name}</p>
-              <Badge variant="secondary">Teacher</Badge>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Teacher Dashboard</h1>
+              <p className="text-xs sm:text-sm text-gray-500">Kathmandu University - B.Tech.Ed. IT</p>
             </div>
-            <Button 
-              onClick={() => setChangePasswordDialogOpen(true)} 
-              variant="outline" 
-              size="sm"
-            >
-              <Lock className="w-4 h-4 mr-2" />
-              Change Password
-            </Button>
-            <Button onClick={logout} variant="outline" size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+              <div className="text-left sm:text-right">
+                <p className="text-sm font-medium">{currentUser?.name}</p>
+                <Badge variant="secondary" className="text-xs">Teacher</Badge>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => setChangePasswordDialogOpen(true)} 
+                  variant="outline" 
+                  size="sm"
+                  className="flex-1 sm:flex-initial"
+                >
+                  <Lock className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Change Password</span>
+                  <span className="sm:hidden">Password</span>
+                </Button>
+                <Button onClick={logout} variant="outline" size="sm" className="flex-1 sm:flex-initial">
+                  <LogOut className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Logout</span>
+                  <span className="sm:hidden">Exit</span>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Tabs defaultValue="subjects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="subjects">My Subjects</TabsTrigger>
-            <TabsTrigger value="notes">Notes</TabsTrigger>
-            <TabsTrigger value="videos">Videos</TabsTrigger>
-            <TabsTrigger value="students">Students</TabsTrigger>
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
+        <Tabs defaultValue="subjects" className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 overflow-x-auto">
+            <TabsTrigger value="subjects" className="text-xs sm:text-sm">My Subjects</TabsTrigger>
+            <TabsTrigger value="notes" className="text-xs sm:text-sm">Notes</TabsTrigger>
+            <TabsTrigger value="videos" className="text-xs sm:text-sm">Videos</TabsTrigger>
+            <TabsTrigger value="students" className="text-xs sm:text-sm">Students</TabsTrigger>
           </TabsList>
 
           {/* Subjects Tab */}
@@ -368,17 +376,18 @@ export const TeacherDashboard = () => {
           <TabsContent value="notes" className="space-y-4">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <CardTitle>Notes Management</CardTitle>
-                    <CardDescription>Upload and manage course notes</CardDescription>
+                    <CardTitle className="text-lg sm:text-xl">Notes Management</CardTitle>
+                    <CardDescription className="text-sm">Upload and manage course notes</CardDescription>
                   </div>
                   <Button 
                     disabled={teacherSubjects.length === 0}
                     onClick={() => setNoteUploadDialogOpen(true)}
+                    className="w-full sm:w-auto"
                   >
-                    <Upload className="w-4 h-4 mr-2" />
-                    Upload Note
+                    <Upload className="w-4 h-4 sm:mr-2" />
+                    <span className="sm:inline">Upload Note</span>
                   </Button>
                 </div>
               </CardHeader>
@@ -422,17 +431,18 @@ export const TeacherDashboard = () => {
           <TabsContent value="videos" className="space-y-4">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <CardTitle>Lecture Videos</CardTitle>
-                    <CardDescription>Upload and manage lecture videos</CardDescription>
+                    <CardTitle className="text-lg sm:text-xl">Lecture Videos</CardTitle>
+                    <CardDescription className="text-sm">Upload and manage lecture videos</CardDescription>
                   </div>
                   <Button 
                     disabled={teacherSubjects.length === 0}
                     onClick={() => setVideoUploadDialogOpen(true)}
+                    className="w-full sm:w-auto"
                   >
-                    <Video className="w-4 h-4 mr-2" />
-                    Upload Video
+                    <Video className="w-4 h-4 sm:mr-2" />
+                    <span className="sm:inline">Upload Video</span>
                   </Button>
                 </div>
               </CardHeader>
@@ -475,22 +485,22 @@ export const TeacherDashboard = () => {
           <TabsContent value="students" className="space-y-4">
             <Card>
               <CardHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                   <div>
-                    <CardTitle>Student Enrollment</CardTitle>
-                    <CardDescription>Enroll students in your subjects</CardDescription>
+                    <CardTitle className="text-lg sm:text-xl">Student Enrollment</CardTitle>
+                    <CardDescription className="text-sm">Enroll students in your subjects</CardDescription>
                   </div>
                   <Dialog open={enrollDialogOpen} onOpenChange={setEnrollDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button disabled={teacherSubjects.length === 0}>
-                        <UserPlus className="w-4 h-4 mr-2" />
-                        Enroll Student
+                      <Button disabled={teacherSubjects.length === 0} className="w-full sm:w-auto">
+                        <UserPlus className="w-4 h-4 sm:mr-2" />
+                        <span className="sm:inline">Enroll Student</span>
                       </Button>
                     </DialogTrigger>
-                    <DialogContent>
+                    <DialogContent className="w-full m-4 max-w-md">
                       <DialogHeader>
-                        <DialogTitle>Enroll Student</DialogTitle>
-                        <DialogDescription>Enroll a student in your subject</DialogDescription>
+                        <DialogTitle className="text-lg sm:text-xl">Enroll Student</DialogTitle>
+                        <DialogDescription className="text-sm">Enroll a student in your subject</DialogDescription>
                       </DialogHeader>
                       <div className="space-y-4">
                         <div>
@@ -570,50 +580,52 @@ export const TeacherDashboard = () => {
                 </div>
               </CardHeader>
               <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Student Name</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Subject</TableHead>
-                      <TableHead>Semester</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {teacherEnrollments.length === 0 ? (
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
                       <TableRow>
-                        <TableCell colSpan={5} className="text-center text-gray-500">
-                          No students enrolled yet
-                        </TableCell>
+                        <TableHead className="min-w-[120px]">Student Name</TableHead>
+                        <TableHead className="min-w-[180px]">Email</TableHead>
+                        <TableHead className="min-w-[150px]">Subject</TableHead>
+                        <TableHead className="min-w-[100px]">Semester</TableHead>
+                        <TableHead className="min-w-[80px]">Actions</TableHead>
                       </TableRow>
-                    ) : (
-                      teacherEnrollments.map((enrollment) => {
-                        const student = users.find(u => u.id === enrollment.student_id);
-                        const subject = subjects.find(s => s.id === enrollment.subject_id);
-                        const semester = semesters.find(s => s.id === enrollment.semester_id);
-                        
-                        return (
-                          <TableRow key={enrollment.id}>
-                            <TableCell>{student?.name}</TableCell>
-                            <TableCell>{student?.email}</TableCell>
-                            <TableCell>{subject?.subject_name}</TableCell>
-                            <TableCell>{semester?.semester_name}</TableCell>
-                            <TableCell>
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleRemoveEnrollment(enrollment.id)}
-                              >
-                                <Trash2 className="w-4 h-4 text-red-500" />
-                              </Button>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })
-                    )}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {teacherEnrollments.length === 0 ? (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-gray-500">
+                            No students enrolled yet
+                          </TableCell>
+                        </TableRow>
+                      ) : (
+                        teacherEnrollments.map((enrollment) => {
+                          const student = users.find(u => u.id === enrollment.student_id);
+                          const subject = subjects.find(s => s.id === enrollment.subject_id);
+                          const semester = semesters.find(s => s.id === enrollment.semester_id);
+                          
+                          return (
+                            <TableRow key={enrollment.id}>
+                              <TableCell className="font-medium">{student?.name}</TableCell>
+                              <TableCell className="text-sm">{student?.email}</TableCell>
+                              <TableCell>{subject?.subject_name}</TableCell>
+                              <TableCell>{semester?.semester_name}</TableCell>
+                              <TableCell>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleRemoveEnrollment(enrollment.id)}
+                                >
+                                  <Trash2 className="w-4 h-4 text-red-500" />
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>

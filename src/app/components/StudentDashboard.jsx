@@ -169,39 +169,46 @@ export const StudentDashboard = () => {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-900">Student Dashboard</h1>
-            <p className="text-sm text-gray-500">Kathmandu University - B.Tech.Ed. IT</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <p className="text-sm font-medium">{currentUser?.name}</p>
-              <Badge variant="secondary">Student</Badge>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+              <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">Student Dashboard</h1>
+              <p className="text-xs sm:text-sm text-gray-500">Kathmandu University - B.Tech.Ed. IT</p>
             </div>
-            <Button 
-              onClick={() => setChangePasswordDialogOpen(true)} 
-              variant="outline" 
-              size="sm"
-            >
-              <Lock className="w-4 h-4 mr-2" />
-              Change Password
-            </Button>
-            <Button onClick={logout} variant="outline" size="sm">
-              <LogOut className="w-4 h-4 mr-2" />
-              Logout
-            </Button>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-4">
+              <div className="text-left sm:text-right">
+                <p className="text-sm font-medium">{currentUser?.name}</p>
+                <Badge variant="secondary" className="text-xs">Student</Badge>
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  onClick={() => setChangePasswordDialogOpen(true)} 
+                  variant="outline" 
+                  size="sm"
+                  className="flex-1 sm:flex-initial"
+                >
+                  <Lock className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Change Password</span>
+                  <span className="sm:hidden">Password</span>
+                </Button>
+                <Button onClick={logout} variant="outline" size="sm" className="flex-1 sm:flex-initial">
+                  <LogOut className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Logout</span>
+                  <span className="sm:hidden">Exit</span>
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8">
         {/* Semester Filter */}
-        <div className="mb-6 flex items-center gap-4">
-          <label className="font-medium text-gray-700">Filter by Semester:</label>
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+          <label className="font-medium text-gray-700 text-sm sm:text-base">Filter by Semester:</label>
           <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-            <SelectTrigger className="w-64">
+            <SelectTrigger className="w-full sm:w-64">
               <SelectValue placeholder="All Semesters" />
             </SelectTrigger>
             <SelectContent>
@@ -215,19 +222,19 @@ export const StudentDashboard = () => {
           </Select>
         </div>
 
-        <Tabs defaultValue="subjects" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="subjects">My Subjects</TabsTrigger>
-            <TabsTrigger value="notes">
+        <Tabs defaultValue="subjects" className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-3 overflow-x-auto">
+            <TabsTrigger value="subjects" className="text-xs sm:text-sm">My Subjects</TabsTrigger>
+            <TabsTrigger value="notes" className="text-xs sm:text-sm">
               Notes 
               {filteredNotes.length > 0 && (
-                <Badge variant="secondary" className="ml-2">{filteredNotes.length}</Badge>
+                <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs">{filteredNotes.length}</Badge>
               )}
             </TabsTrigger>
-            <TabsTrigger value="videos">
+            <TabsTrigger value="videos" className="text-xs sm:text-sm">
               Videos
               {filteredVideos.length > 0 && (
-                <Badge variant="secondary" className="ml-2">{filteredVideos.length}</Badge>
+                <Badge variant="secondary" className="ml-1 sm:ml-2 text-xs">{filteredVideos.length}</Badge>
               )}
             </TabsTrigger>
           </TabsList>

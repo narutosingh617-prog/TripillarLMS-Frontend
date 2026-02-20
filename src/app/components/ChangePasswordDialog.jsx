@@ -7,8 +7,9 @@ import { Alert, AlertDescription } from './ui/alert';
 import { Lock, Eye, EyeOff } from 'lucide-react';
 import { toast } from 'sonner';
 import { changePassword } from '../services/userService';
+import { getCurrentUser } from '../services/authService';
 
-export const ChangePasswordDialog = ({ open, onOpenChange }) => {
+export const ChangePasswordDialog = ({ open, onOpenChange, isFirstLogin = false }) => {
   const [oldPassword, setOldPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -38,7 +39,7 @@ export const ChangePasswordDialog = ({ open, onOpenChange }) => {
       return;
     }
 
-    if (oldPassword === newPassword) {
+    if (oldPassword === newPassword && !isFirstLogin) {
       setError('New password must be different from old password');
       return;
     }
@@ -48,6 +49,12 @@ export const ChangePasswordDialog = ({ open, onOpenChange }) => {
     try {
       await changePassword(oldPassword, newPassword);
       toast.success('Password changed successfully!');
+      
+      // Update user in localStorage to reflect mustChangePassword = false
+      const user = getCurrentUser();
+      if (user) {
+        localStorage.setItem('user', JSON.stringify({ ...user, mustChangePassword: false }));
+      }
       
       // Reset form
       setOldPassword('');
@@ -65,6 +72,10 @@ export const ChangePasswordDialog = ({ open, onOpenChange }) => {
   };
 
   const handleClose = () => {
+    // Don't allow closing if it's first login
+    if (isFirstLogin) {
+      return;
+    }
     setOldPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -73,15 +84,18 @@ export const ChangePasswordDialog = ({ open, onOpenChange }) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-md">
+    <Dialog open={open} onOpenChange={handleClose} disableClose={isFirstLogin}>
+      <DialogContent className="sm:max-w-md w-full m-4">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Lock className="size-5" />
-            Change Password
+            {isFirstLogin ? 'Change Your Password' : 'Change Password'}
           </DialogTitle>
           <DialogDescription>
-            Enter your current password and choose a new password
+            {isFirstLogin 
+              ? 'You must change your password before accessing the system. Enter the password sent to your email as your current password.'
+              : 'Enter your current password and choose a new password'
+            }
           </DialogDescription>
         </DialogHeader>
 
@@ -93,14 +107,16 @@ export const ChangePasswordDialog = ({ open, onOpenChange }) => {
           )}
 
           <div className="space-y-2">
-            <Label htmlFor="old-password">Current Password</Label>
+            <Label htmlFor="old-password">
+              {isFirstLogin ? 'Temporary Password (from email)' : 'Current Password'}
+            </Label>
             <div className="relative">
               <Input
                 id="old-password"
                 type={showOldPassword ? 'text' : 'password'}
                 value={oldPassword}
                 onChange={(e) => setOldPassword(e.target.value)}
-                placeholder="Enter current password"
+                placeholder={isFirstLogin ? 'Enter password from email' : 'Enter current password'}
                 required
               />
               <Button
@@ -178,17 +194,19 @@ export const ChangePasswordDialog = ({ open, onOpenChange }) => {
           </div>
 
           <div className="flex gap-2 pt-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleClose}
-              className="flex-1"
-              disabled={isLoading}
-            >
-              Cancel
-            </Button>
+            {!isFirstLogin && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleClose}
+                className="flex-1"
+                disabled={isLoading}
+              >
+                Cancel
+              </Button>
+            )}
             <Button type="submit" className="flex-1" disabled={isLoading}>
-              {isLoading ? 'Changing...' : 'Change Password'}
+              {isLoading ? 'Changing...' : isFirstLogin ? 'Change Password to Continue' : 'Change Password'}
             </Button>
           </div>
         </form>

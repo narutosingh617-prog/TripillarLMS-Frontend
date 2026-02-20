@@ -159,42 +159,43 @@ export const VideoPlayer = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-5xl p-0 overflow-hidden">
-        <DialogTitle className="sr-only">{title}</DialogTitle>
-        <DialogDescription className="sr-only">
-          Video player for {title}
-        </DialogDescription>
-        <div className="bg-black">
+      <DialogContent className="max-w-5xl w-full p-0 overflow-hidden bg-transparent border-0 shadow-none m-2 sm:m-4" style={{ backgroundColor: 'transparent', background: 'transparent' }}>
+        <div className="bg-black/90 backdrop-blur-sm rounded-xl overflow-hidden">
+          <DialogTitle className="sr-only">{title}</DialogTitle>
+          <DialogDescription className="sr-only">
+            Video player for {title}
+          </DialogDescription>
           {/* Header */}
-          <div className="bg-gradient-to-b from-black/80 to-transparent absolute top-0 left-0 right-0 z-10 p-4 flex items-center justify-between">
-            <h3 className="text-white font-medium truncate pr-4">{title}</h3>
-            <div className="flex items-center gap-2">
+          <div className="bg-gradient-to-b from-black/80 to-transparent absolute top-0 left-0 right-0 z-10 p-2 sm:p-4 flex items-center justify-between">
+            <h3 className="text-white font-medium truncate pr-2 sm:pr-4 text-sm sm:text-base">{title}</h3>
+            <div className="flex items-center gap-1 sm:gap-2">
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={handleDownload}
-                className="text-white hover:bg-white/20"
+                className="text-white hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10"
               >
-                <Download className="size-5" />
+                <Download className="size-4 sm:size-5" />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
                 onClick={() => onOpenChange(false)}
-                className="text-white hover:bg-white/20"
+                className="text-white hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10"
               >
-                <X className="size-5" />
+                <X className="size-4 sm:size-5" />
               </Button>
             </div>
           </div>
 
           {/* Video */}
-          <div className="relative aspect-video bg-black">
+          <div className="relative aspect-video bg-transparent" style={{ backgroundColor: 'transparent', background: 'transparent' }}>
             {isGoogleDrive ? (
               // Use iframe for Google Drive videos
               <iframe
                 src={embedUrl}
-                className="w-full h-full"
+                className="w-full h-full bg-transparent"
+                style={{ backgroundColor: 'transparent', background: 'transparent' }}
                 allow="autoplay; encrypted-media"
                 allowFullScreen
                 title={title}
@@ -204,7 +205,8 @@ export const VideoPlayer = ({
               <>
                 <video
                   ref={videoRef}
-                  className="w-full h-full"
+                  className="w-full h-full bg-transparent"
+                  style={{ backgroundColor: 'transparent', background: 'transparent' }}
                   src={videoUrl}
                   onTimeUpdate={handleTimeUpdate}
                   onLoadedMetadata={handleLoadedMetadata}
@@ -218,10 +220,11 @@ export const VideoPlayer = ({
                 {/* Play Overlay */}
                 {!isPlaying && (
                   <div
-                    className="absolute inset-0 flex items-center justify-center bg-black/30 cursor-pointer"
+                    className="absolute inset-0 flex items-center justify-center bg-black/10 cursor-pointer"
                     onClick={togglePlay}
+                    style={{ backgroundColor: 'transparent' }}
                   >
-                    <div className="bg-white/90 rounded-full p-6 hover:bg-white transition-colors">
+                    <div className="bg-white/90 rounded-full p-6 hover:bg-white transition-all hover:scale-110 shadow-lg">
                       <Play className="size-12 text-black" fill="black" />
                     </div>
                   </div>
@@ -232,10 +235,10 @@ export const VideoPlayer = ({
 
           {/* Controls - Only show for non-Google Drive videos */}
           {!isGoogleDrive && (
-            <div className="bg-gradient-to-t from-black/90 to-transparent p-4 space-y-2">
+            <div className="bg-gradient-to-t from-black/90 to-transparent p-2 sm:p-4 space-y-2">
               {/* Seek Bar */}
-              <div className="flex items-center gap-3">
-                <span className="text-white text-sm font-mono min-w-[45px]">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="text-white text-xs sm:text-sm font-mono min-w-[40px] sm:min-w-[45px]">
                   {formatTime(currentTime)}
                 </span>
                 <input
@@ -249,40 +252,40 @@ export const VideoPlayer = ({
                     background: `linear-gradient(to right, white 0%, white ${(currentTime / duration) * 100}%, rgb(75, 85, 99) ${(currentTime / duration) * 100}%, rgb(75, 85, 99) 100%)`
                   }}
                 />
-                <span className="text-white text-sm font-mono min-w-[45px]">
+                <span className="text-white text-xs sm:text-sm font-mono min-w-[40px] sm:min-w-[45px]">
                   {formatTime(duration)}
                 </span>
               </div>
 
               {/* Control Buttons */}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={togglePlay}
-                    className="text-white hover:bg-white/20"
+                    className="text-white hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10"
                   >
-                    {isPlaying ? <Pause className="size-5" /> : <Play className="size-5" />}
+                    {isPlaying ? <Pause className="size-4 sm:size-5" /> : <Play className="size-4 sm:size-5" />}
                   </Button>
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={toggleMute}
-                    className="text-white hover:bg-white/20"
+                    className="text-white hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10"
                   >
-                    {isMuted ? <VolumeX className="size-5" /> : <Volume2 className="size-5" />}
+                    {isMuted ? <VolumeX className="size-4 sm:size-5" /> : <Volume2 className="size-4 sm:size-5" />}
                   </Button>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2">
                   <Button
                     variant="ghost"
                     size="icon"
                     onClick={toggleFullscreen}
-                    className="text-white hover:bg-white/20"
+                    className="text-white hover:bg-white/20 h-8 w-8 sm:h-10 sm:w-10"
                   >
-                    <Maximize className="size-5" />
+                    <Maximize className="size-4 sm:size-5" />
                   </Button>
                 </div>
               </div>

@@ -208,181 +208,189 @@ export const UploadDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            {uploadType === 'note' ? <FileText className="size-5" /> : <Video className="size-5" />}
-            Upload {uploadType === 'note' ? 'Notes' : 'Lecture Video'}
-          </DialogTitle>
-          <DialogDescription>
-            {uploadType === 'note' 
-              ? 'Upload PDF, DOC, DOCX, PPT, or PPTX files (max 50MB)'
-              : 'Upload MP4, MKV, AVI, or MOV files (max 500MB)'}
-          </DialogDescription>
-        </DialogHeader>
+      <DialogContent className="sm:max-w-[500px] w-full max-h-[90vh] overflow-y-auto bg-transparent border-0 shadow-none m-2 sm:m-4" style={{ backgroundColor: 'transparent' }}>
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-lg border border-gray-100 p-4 sm:p-6">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              {uploadType === 'note' ? <FileText className="size-5 text-primary" /> : <Video className="size-5 text-primary" />}
+              Upload {uploadType === 'note' ? 'Notes' : 'Lecture Video'}
+            </DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              {uploadType === 'note' 
+                ? 'Upload PDF, DOC, DOCX, PPT, or PPTX files (max 50MB)'
+                : 'Upload MP4, MKV, AVI, or MOV files (max 500MB)'}
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="space-y-4">
-          {/* File Selection Area */}
-          {!showPreview && (
-            <div
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-              className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
-                isDragging 
-                  ? 'border-primary bg-primary/5' 
-                  : 'border-gray-300 hover:border-primary/50 hover:bg-gray-50'
-              }`}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <div className="flex flex-col items-center gap-3">
-                <Upload className={`size-12 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
-                <div>
-                  <p className="font-medium">
-                    {isDragging ? 'Drop file here' : 'Click to upload or drag & drop'}
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {uploadType === 'note' 
-                      ? 'PDF, DOC, DOCX, PPT, PPTX (max 50MB)'
-                      : 'MP4, MKV, AVI, MOV (max 500MB)'}
-                  </p>
-                </div>
-                <Button type="button" variant="outline" size="sm">
-                  Browse Files
-                </Button>
-              </div>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept={Object.keys(allowedTypes).join(',')}
-                onChange={handleFileInputChange}
-                className="hidden"
-              />
-            </div>
-          )}
-
-          {/* File Preview */}
-          {showPreview && selectedFile && (
-            <div className="border rounded-lg p-4 bg-gray-50">
-              <div className="flex items-start gap-3">
-                <div className="flex-shrink-0">
-                  {getFileIcon()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-medium truncate">{selectedFile.name}</p>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                    <span>{formatFileSize(selectedFile.size)}</span>
-                    <span>•</span>
-                    <span className="uppercase">{selectedFile.name.split('.').pop()}</span>
+          <div className="space-y-4">
+            {/* File Selection Area */}
+            {!showPreview && (
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                className={`border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer ${
+                  isDragging 
+                    ? 'border-primary bg-primary/5 scale-[1.02]' 
+                    : 'border-gray-300 hover:border-primary/50 hover:bg-gray-50/50'
+                }`}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <div className="flex flex-col items-center gap-3">
+                  <div className={`p-3 rounded-full ${isDragging ? 'bg-primary/10' : 'bg-gray-100'}`}>
+                    <Upload className={`size-12 ${isDragging ? 'text-primary' : 'text-muted-foreground'}`} />
                   </div>
-                  
-                  {/* Upload Progress */}
-                  {isUploading && (
-                    <div className="mt-3 space-y-1">
-                      <Progress value={uploadProgress} className="h-2" />
-                      <p className="text-xs text-muted-foreground">
-                        Uploading... {uploadProgress}%
-                      </p>
-                    </div>
-                  )}
-                  
-                  {/* Upload Complete */}
-                  {uploadComplete && (
-                    <div className="flex items-center gap-2 mt-2 text-green-600">
-                      <Check className="size-4" />
-                      <span className="text-sm font-medium">Upload complete!</span>
-                    </div>
-                  )}
-                </div>
-                
-                {!isUploading && !uploadComplete && (
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    onClick={removeFile}
-                    className="flex-shrink-0"
-                  >
-                    <X className="size-4" />
+                  <div>
+                    <p className="font-medium text-gray-700">
+                      {isDragging ? 'Drop file here' : 'Click to upload or drag & drop'}
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {uploadType === 'note' 
+                        ? 'PDF, DOC, DOCX, PPT, PPTX (max 50MB)'
+                        : 'MP4, MKV, AVI, MOV (max 500MB)'}
+                    </p>
+                  </div>
+                  <Button type="button" variant="outline" size="sm" className="mt-2">
+                    Browse Files
                   </Button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Form Fields */}
-          {showPreview && (
-            <>
-              <div className="space-y-2">
-                <Label htmlFor="title">
-                  Title / Description <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter title or description"
-                  disabled={isUploading || uploadComplete}
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={Object.keys(allowedTypes).join(',')}
+                  onChange={handleFileInputChange}
+                  className="hidden"
                 />
               </div>
+            )}
 
-              <div className="space-y-2">
-                <Label htmlFor="subject">
-                  Subject <span className="text-red-500">*</span>
-                </Label>
-                <Select 
-                  value={selectedSubject} 
-                  onValueChange={setSelectedSubject}
-                  disabled={isUploading || uploadComplete}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select subject" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {subjects.map((subject) => (
-                      <SelectItem key={subject.id} value={subject.id}>
-                        {subject.code} - {subject.name} (Semester {subject.semester})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* Auto-Tagged Information */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="size-4 text-blue-600 mt-0.5" />
-                  <div className="text-sm">
-                    <p className="font-medium text-blue-900">Auto-tagged Information</p>
-                    <ul className="text-blue-700 mt-1 space-y-0.5 text-xs">
-                      <li>• Upload date & time: {new Date().toLocaleString()}</li>
-                      <li>• File will be linked to selected subject and semester</li>
-                      <li>• Students enrolled in this subject will have instant access</li>
-                    </ul>
+            {/* File Preview */}
+            {showPreview && selectedFile && (
+              <div className="border rounded-xl p-4 bg-gray-50/50 backdrop-blur-sm">
+                <div className="flex items-start gap-3">
+                  <div className="flex-shrink-0">
+                    {getFileIcon()}
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate text-gray-700">{selectedFile.name}</p>
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                      <span>{formatFileSize(selectedFile.size)}</span>
+                      <span>•</span>
+                      <span className="uppercase bg-gray-100 px-2 py-0.5 rounded text-xs">{selectedFile.name.split('.').pop()}</span>
+                    </div>
+                    
+                    {/* Upload Progress */}
+                    {isUploading && (
+                      <div className="mt-3 space-y-1">
+                        <Progress value={uploadProgress} className="h-2 bg-gray-200" />
+                        <p className="text-xs text-muted-foreground flex items-center gap-2">
+                          <span className="animate-pulse">Uploading...</span>
+                          <span>{uploadProgress}%</span>
+                        </p>
+                      </div>
+                    )}
+                    
+                    {/* Upload Complete */}
+                    {uploadComplete && (
+                      <div className="flex items-center gap-2 mt-2 text-green-600 bg-green-50 px-3 py-1.5 rounded-lg">
+                        <Check className="size-4" />
+                        <span className="text-sm font-medium">Upload complete!</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {!isUploading && !uploadComplete && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={removeFile}
+                      className="flex-shrink-0 hover:bg-gray-200"
+                    >
+                      <X className="size-4" />
+                    </Button>
+                  )}
                 </div>
               </div>
+            )}
 
-              {/* Action Buttons */}
-              <div className="flex gap-2 pt-2">
-                <Button
-                  variant="outline"
-                  onClick={() => onOpenChange(false)}
-                  disabled={isUploading}
-                  className="flex-1"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleUpload}
-                  disabled={isUploading || uploadComplete || !title || !selectedSubject}
-                  className="flex-1"
-                >
-                  {isUploading ? 'Uploading...' : uploadComplete ? 'Uploaded!' : 'Upload'}
-                </Button>
-              </div>
-            </>
-          )}
+            {/* Form Fields */}
+            {showPreview && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="title" className="text-sm font-medium text-gray-700">
+                    Title / Description <span className="text-red-500">*</span>
+                  </Label>
+                  <Input
+                    id="title"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter title or description"
+                    disabled={isUploading || uploadComplete}
+                    className="bg-white/50 border-gray-200"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="subject" className="text-sm font-medium text-gray-700">
+                    Subject <span className="text-red-500">*</span>
+                  </Label>
+                  <Select 
+                    value={selectedSubject} 
+                    onValueChange={setSelectedSubject}
+                    disabled={isUploading || uploadComplete}
+                  >
+                    <SelectTrigger className="bg-white/50 border-gray-200">
+                      <SelectValue placeholder="Select subject" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subjects.map((subject) => (
+                        <SelectItem key={subject.id} value={subject.id}>
+                          {subject.code} - {subject.name} (Semester {subject.semester})
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Auto-Tagged Information */}
+                <div className="bg-blue-50/80 backdrop-blur-sm border border-blue-100 rounded-xl p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="p-2 bg-blue-100 rounded-lg">
+                      <AlertCircle className="size-4 text-blue-600" />
+                    </div>
+                    <div className="text-sm">
+                      <p className="font-medium text-blue-900">Auto-tagged Information</p>
+                      <ul className="text-blue-700 mt-2 space-y-1 text-xs">
+                        <li>• Upload date & time: {new Date().toLocaleString()}</li>
+                        <li>• File will be linked to selected subject and semester</li>
+                        <li>• Students enrolled in this subject will have instant access</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => onOpenChange(false)}
+                    disabled={isUploading}
+                    className="flex-1 bg-white/50"
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleUpload}
+                    disabled={isUploading || uploadComplete || !title || !selectedSubject}
+                    className="flex-1 bg-primary text-white hover:bg-primary/90"
+                  >
+                    {isUploading ? 'Uploading...' : uploadComplete ? 'Uploaded!' : 'Upload'}
+                  </Button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </DialogContent>
     </Dialog>

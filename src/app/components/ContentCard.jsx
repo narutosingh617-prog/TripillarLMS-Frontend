@@ -72,9 +72,9 @@ export const ContentCard = ({
       </div>
 
       {/* Content */}
-      <CardContent className="p-4 space-y-3">
+      <CardContent className="p-3 sm:p-4 space-y-2 sm:space-y-3">
         {/* Title */}
-        <h3 className="font-semibold text-lg line-clamp-2 min-h-[3.5rem]">
+        <h3 className="font-semibold text-base sm:text-lg line-clamp-2 min-h-[3rem] sm:min-h-[3.5rem]">
           {title}
         </h3>
 
@@ -84,9 +84,9 @@ export const ContentCard = ({
             <Badge variant="outline" className="text-xs">
               {subjectCode}
             </Badge>
-            <span className="text-sm text-gray-600 truncate">{subjectName}</span>
+            <span className="text-xs sm:text-sm text-gray-600 truncate">{subjectName}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          <div className="flex items-center gap-1 sm:gap-2 text-xs sm:text-sm text-gray-500">
             <Calendar className="size-3" />
             <span className="text-xs">{semesterName}</span>
             <span>•</span>
@@ -99,18 +99,20 @@ export const ContentCard = ({
           <div className="flex gap-2 pt-2">
             <Button
               onClick={onView}
-              className="flex-1"
+              className="flex-1 text-xs sm:text-sm"
               size="sm"
             >
               {type === 'video' ? (
                 <>
-                  <Play className="size-4 mr-1" />
-                  Watch
+                  <Play className="size-3 sm:size-4 sm:mr-1" />
+                  <span className="hidden sm:inline">Watch</span>
+                  <span className="sm:hidden">Play</span>
                 </>
               ) : (
                 <>
-                  <Eye className="size-4 mr-1" />
-                  View
+                  <Eye className="size-3 sm:size-4 sm:mr-1" />
+                  <span className="hidden sm:inline">View</span>
+                  <span className="sm:hidden">Open</span>
                 </>
               )}
             </Button>
@@ -120,8 +122,9 @@ export const ContentCard = ({
                 onClick={onDownload}
                 variant="outline"
                 size="sm"
+                className="px-2 sm:px-3"
               >
-                <Download className="size-4" />
+                <Download className="size-3 sm:size-4" />
               </Button>
             )}
             
@@ -130,9 +133,9 @@ export const ContentCard = ({
                 onClick={onDelete}
                 variant="outline"
                 size="sm"
-                className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                className="text-red-500 hover:text-red-600 hover:bg-red-50 px-2 sm:px-3"
               >
-                <Trash2 className="size-4" />
+                <Trash2 className="size-3 sm:size-4" />
               </Button>
             )}
           </div>

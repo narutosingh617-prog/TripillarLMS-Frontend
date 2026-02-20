@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { login as authLogin, logout as authLogout, getCurrentUser } from '../services/authService';
 import * as userService from '../services/userService';
+import * as teacherService from '../services/teacherService';
 import * as semesterService from '../services/semesterService';
 import * as subjectService from '../services/subjectService';
 import * as enrollmentService from '../services/enrollmentService';
@@ -12,6 +13,7 @@ const AppContext = createContext(undefined);
 export const AppProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [users, setUsers] = useState([]);
+  const [teachers, setTeachers] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [enrollments, setEnrollments] = useState([]);
@@ -43,7 +45,10 @@ export const AppProvider = ({ children }) => {
         videoService.getAllVideos().catch(() => ({ data: [] })),
       ]);
 
-      setUsers(usersRes.data || []);
+      const allUsers = usersRes.data || [];
+      setUsers(allUsers);
+      // Filter teachers from users
+      setTeachers(allUsers.filter(u => u.role === 'teacher'));
       setSemesters(semestersRes.data || []);
       setSubjects(subjectsRes.data || []);
       setEnrollments(enrollmentsRes.data || []);
@@ -61,10 +66,10 @@ export const AppProvider = ({ children }) => {
       const response = await authLogin(email, password);
       setCurrentUser(response.user);
       await loadData();
-      return true;
+      return response;
     } catch (error) {
       console.error('Login error:', error);
-      return false;
+      throw error;
     }
   };
 
@@ -82,7 +87,14 @@ export const AppProvider = ({ children }) => {
   const addUser = async (user) => {
     try {
       const response = await userService.createUser(user);
-      setUsers([...users, response.data]);
+      console.log('User created response:', response);
+      console.log('User created data:', response.data);
+      setUsers(prevUsers => {
+        const updatedUsers = [...prevUsers, response.data];
+        // Refresh teachers from users
+        setTeachers(updatedUsers.filter(u => u.role === 'teacher'));
+        return updatedUsers;
+      });
       return response.data;
     } catch (error) {
       console.error('Add user error:', error);
@@ -237,6 +249,7 @@ export const AppProvider = ({ children }) => {
         login,
         logout,
         users,
+        teachers,
         addUser,
         updateUser,
         deleteUser,
